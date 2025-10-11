@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备展示 - L rn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #b3e0ff 0%, #ffb3d9 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.92);
+            --text-primary: #1d1d1f;
+            --text-secondary: #515154;
+            --text-tertiary: #86868b;
+            --accent-color: #06c;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .dark-mode {
+            --bg-primary: linear-gradient(135deg, #0f0523 0%, #050a1a 100%);
+            --bg-secondary: rgba(29, 29, 31, 0.92);
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent-color: #2997ff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        /* 隐藏滚动条的完整解决方案 */
+        body {
+            /* 标准属性 - 隐藏滚动条但保留功能 */
+            overflow-y: scroll;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE和Edge */
+            
+            /* 防止水平滚动 */
+            overflow-x: hidden;
+            width: 100%;
+            
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.47059;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+        
+        /* Webkit浏览器(Chrome, Safari) */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 全局过渡效果 */
+        body, nav, .theme-toggle, .device-card, .device-image, 
+        .device-info, .specs-grid, .spec-item, .device-badge {
+            transition: var(--transition);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 */
+        nav {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .dark-mode nav {
+            background-color: rgba(29, 29, 31, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+            padding: 8px;
+            border-radius: 50%;
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .dark-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* 页面标题区域 */
+        .page-header {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+        
+        .page-header h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        .page-header p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 设备网格布局 */
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .device-card {
+            background-color: var(--bg-secondary);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .device-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .device-card:hover {
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .device-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .device-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--accent-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .device-info {
+            padding: 20px;
+        }
+        
+        .device-info h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .device-info p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .spec-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+        }
+        
+        .spec-value {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .device-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 18px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 13px;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 详情弹窗样式 */
+        .detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .detail-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .detail-modal {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.7);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                       opacity 0.4s ease;
+        }
+        
+        .detail-overlay.active .detail-modal {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .detail-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+        
+        .detail-close:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .dark-mode .detail-close:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-content {
+            padding: 40px;
+        }
+        
+        .detail-header {
+            margin-bottom: 30px;
+        }
+        
+        .detail-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .detail-subtitle {
+            color: var(--text-secondary);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        
+        .detail-image {
+            height: 300px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .detail-specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-spec-item {
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+        }
+        
+        .dark-mode .detail-spec-item {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .detail-spec-label {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            margin-bottom: 5px;
+        }
+        
+        .detail-spec-value {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .detail-description {
+            line-height: 1.6;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .page-header h1 {
+                font-size: 36px;
+            }
+            
+            .devices-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-content {
+                padding: 25px;
+            }
+            
+            .detail-title {
+                font-size: 24px;
+            }
+            
+            .detail-specs {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-image {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="main.html">首页</a></li>
+                <li><a href="tech.html">资源</a></li>
+                <li><a href="photography.html">摄影</a></li>
+                <li><a href="devices.html" class="active">设备</a></li>
+                <li><a href="vr.html">VR</a></li>
+                <li><a href="about.html">关于</a></li>
+                <li><a href="contact.html">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 页面标题 -->
+        <section class="page-header">
+            <h1>我的设备库</h1>
+            <p>探索我使用的各种科技设备，从VR头显到摄影器材，每件设备都有详细评测和使用体验分享。</p>
+        </section>
+
+        <!-- 设备展示网格 -->
+        <section class="devices-grid">
+            <!-- 设备卡片 1 -->
+            <div class="device-card" data-device="pico4">
+                <div class="device-image" style="background: linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 100%);">
+                    <div class="device-badge">VR设备</div>
+                </div>
+                <div class="device-info">
+                    <h3>PICO 4</h3>
+                    <p>一体式VR头显，配备高清显示屏和6DoF追踪，提供沉浸式虚拟现实体验。</p>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">分辨率</span>
+                            <span class="spec-value">4320 × 2160</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">刷新率</span>
+                            <span class="spec-value">90Hz</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">FOV</span>
+                            <span class="spec-value">105°</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">存储</span>
+                            <span class="spec-value">128GB</span>
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="btn btn-outline view-details">技术规格</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设备卡片 2 -->
+            <div class="device-card" data-device="xiaomi15spro">
+                <div class="device-image" style="background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);">
+                    <div class="device-badge">主力手机</div>
+                </div>
+                <div class="device-info">
+                    <h3>Xiaomi 15S Pro</h3>
+                    <p>小米数字系列旗舰手机，搭载高性能处理器和顶级摄像头系统。</p>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">处理器</span>
+                            <span class="spec-value">玄戒O1</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">内存</span>
+                            <span class="spec-value">16GB</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">存储</span>
+                            <span class="spec-value">1024GB</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">摄像头</span>
+                            <span class="spec-value">50MP+50MP+50MP</span>
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="btn btn-outline view-details">技术规格</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设备卡片 3 -->
+            <div class="device-card" data-device="macmini">
+                <div class="device-image" style="background: linear-gradient(135deg, #5c6bc0 0%, #3949ab 100%);">
+                    <div class="device-badge">服务器主机</div>
+                </div>
+                <div class="device-info">
+                    <h3>Mac mini A1347</h3>
+                    <p>紧凑型台式电脑，性能稳定可靠。</p>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">处理器</span>
+                            <span class="spec-value">Intel Core i7</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">内存</span>
+                            <span class="spec-value">8GB DDR3</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">存储</span>
+                            <span class="spec-value">256GB SSD</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">接口</span>
+                            <span class="spec-value">Thunderbolt 2</span>
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="btn btn-outline view-details">技术规格</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设备卡片 4 -->
+            <div class="device-card" data-device="magicbookpro">
+                <div class="device-image" style="background: linear-gradient(135deg, #26a69a 0%, #00796b 100%);">
+                    <div class="device-badge">游戏本</div>
+                </div>
+                <div class="device-info">
+                    <h3>MagicBook Pro 16</h3>
+                    <p>高性能游戏笔记本电脑，配备独立显卡和大内存，满足游戏和创作需求。</p>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">处理器</span>
+                            <span class="spec-value">Intel Core Ultra 9 285H</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">内存</span>
+                            <span class="spec-value">32GB LPDDR5XL</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">存储</span>
+                            <span class="spec-value">1TB SSD</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">显卡</span>
+                            <span class="spec-value">RTX 5070</span>
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="btn btn-outline view-details">技术规格</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设备卡片 5 -->
+            <div class="device-card" data-device="xiaomipad6pro">
+                <div class="device-image" style="background: linear-gradient(135deg, #ab47bc 0%, #7b1fa2 100%);">
+                    <div class="device-badge">平板电脑</div>
+                </div>
+                <div class="device-info">
+                    <h3>Xiaomi Pad 6 Pro</h3>
+                    <p>高性能平板电脑，适合办公、学习和娱乐，支持手写笔和键盘。</p>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">处理器</span>
+                            <span class="spec-value">骁龙8+ Gen 1</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">内存</span>
+                            <span class="spec-value">8GB</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">存储</span>
+                            <span class="spec-value">256GB</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">屏幕</span>
+                            <span class="spec-value">11英寸 2.8K</span>
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="btn btn-outline view-details">技术规格</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设备卡片 6 -->
+            <div class="device-card" data-device="redmibuds6pro">
+                <div class="device-image" style="background: linear-gradient(135deg, #66bb6a 0%, #388e3c 100%);">
+                    <div class="device-badge">音频设备</div>
+                </div>
+                <div class="device-info">
+                    <h3>Redmi Buds 6 Pro</h3>
+                    <p>真无线降噪耳机，提供高质量音频和长续航体验。</p>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">驱动单元</span>
+                            <span class="spec-value">10mm</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">降噪深度</span>
+                            <span class="spec-value">43dB</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">续航</span>
+                            <span class="spec-value">36小时</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">延迟</span>
+                            <span class="spec-value">59ms</span>
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="btn btn-outline view-details">技术规格</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div class="detail-overlay" id="detailOverlay">
+        <div class="detail-modal">
+            <button class="detail-close" id="detailClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="detail-content" id="detailContent">
+                <!-- 内容将由JavaScript动态填充 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        });
+
+        // 设备详情数据
+        const deviceDetails = {
+            'pico4': {
+                title: 'PICO 4',
+                subtitle: '一体式VR头显',
+                image: 'linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 100%)',
+                description: 'PICO 4是一款高性能的一体式VR头显，配备高清显示屏和6DoF追踪技术，为用户提供沉浸式的虚拟现实体验。适合游戏、观影和社交应用。',
+                specs: [
+                    { label: '分辨率', value: '4320 × 2160' },
+                    { label: '刷新率', value: '90Hz' },
+                    { label: 'FOV', value: '105°' },
+                    { label: '追踪', value: '6DoF' },
+                    { label: '存储', value: '128GB' },
+                    { label: '重量', value: '295g' },
+                    { label: '电池续航', value: '2.5-3小时' },
+                    { label: '连接', value: 'Wi-Fi 6, Bluetooth 5.2' }
+                ]
+            },
+            'xiaomi15spro': {
+                title: 'Xiaomi 15S Pro',
+                subtitle: '旗舰级智能手机',
+                image: 'linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%)',
+                description: 'Xiaomi 15S Pro是小米的旗舰智能手机，搭载最新的骁龙处理器和顶级摄像头系统，提供出色的性能和拍摄体验。',
+                specs: [
+                    { label: '处理器', value: '玄戒O1' },
+                    { label: '内存', value: '16GB LPDDR5X' },
+                    { label: '存储', value: '1024GB UFS 4.0' },
+                    { label: '屏幕', value: '6.7英寸 AMOLED' },
+                    { label: '分辨率', value: '3200 × 1440' },
+                    { label: '刷新率', value: '120Hz' },
+                    { label: '主摄像头', value: '50MP Sony IMX989' },
+                    { label: '电池', value: '6100mAh' }
+                ]
+            },
+            'macmini': {
+                title: 'Mac mini A1347',
+                subtitle: '紧凑型台式电脑',
+                image: 'linear-gradient(135deg, #5c6bc0 0%, #3949ab 100%)',
+                description: 'Mac mini A1347是苹果的紧凑型台式电脑，虽然型号较老但性能稳定，适合办公和轻度创作使用。',
+                specs: [
+                    { label: '处理器', value: 'Intel Core i7' },
+                    { label: '内存', value: '8GB DDR3' },
+                    { label: '存储', value: '256GB SSD' },
+                    { label: '显卡', value: 'NVIDIA GeForce 320M' },
+                    { label: '接口', value: 'Thunderbolt 2, USB 3.0' },
+                    { label: '系统', value: 'macOS & Lunix' },
+                    { label: '尺寸', value: '19.7 × 19.7 × 3.6 cm' },
+                    { label: '重量', value: '1.3kg' }
+                ]
+            },
+            'magicbookpro': {
+                title: 'MagicBook Pro 16',
+                subtitle: '高性能游戏笔记本电脑',
+                image: 'linear-gradient(135deg, #26a69a 0%, #00796b 100%)',
+                description: 'MagicBook Pro 16是荣耀的高性能游戏本，配备强大的处理器和独立显卡，适合游戏、视频编辑和3D渲染等高性能需求。',
+                specs: [
+                    { label: '处理器', value: 'Intel Core Ultra 9 285H' },
+                    { label: '内存', value: '32GB DDR5' },
+                    { label: '存储', value: '1TB NVMe SSD' },
+                    { label: '显卡', value: 'NVIDIA RTX 5070' },
+                    { label: '屏幕', value: '16英寸 2.5K' },
+                    { label: '刷新率', value: '165Hz' },
+                    { label: '电池', value: '75Wh' },
+                    { label: '重量', value: '2.1kg' }
+                ]
+            },
+            'xiaomipad6pro': {
+                title: 'Xiaomi Pad 6 Pro',
+                subtitle: '高性能平板电脑',
+                image: 'linear-gradient(135deg, #ab47bc 0%, #7b1fa2 100%)',
+                description: 'Xiaomi Pad 6 Pro是小米的高性能平板电脑，配备强大的处理器和高刷新率屏幕，适合办公、学习和娱乐使用。',
+                specs: [
+                    { label: '处理器', value: '骁龙8+ Gen 1' },
+                    { label: '内存', value: '8GB LPDDR5' },
+                    { label: '存储', value: '256GB UFS 3.1' },
+                    { label: '屏幕', value: '11英寸 2.8K' },
+                    { label: '刷新率', value: '144Hz' },
+                    { label: '摄像头', value: '50MP + 2MP' },
+                    { label: '电池', value: '8600mAh' },
+                    { label: '系统', value: 'HyperOS2.0 for pad' }
+                ]
+            },
+            'redmibuds6pro': {
+                title: 'Redmi Buds 6 Pro',
+                subtitle: '真无线降噪耳机',
+                image: 'linear-gradient(135deg, #66bb6a 0%, #388e3c 100%)',
+                description: 'Redmi Buds 6 Pro是红米的旗舰真无线降噪耳机，提供出色的音质和主动降噪效果，续航表现优秀。',
+                specs: [
+                    { label: '驱动单元', value: '10mm复合振膜' },
+                    { label: '降噪深度', value: '43dB' },
+                    { label: '续航', value: '36小时（含充电盒）' },
+                    { label: '单次续航', value: '9小时（降噪关）' },
+                    { label: '延迟', value: '59ms（游戏模式）' },
+                    { label: '防水等级', value: 'IP54' },
+                    { label: '蓝牙版本', value: '5.3' },
+                    { label: '重量', value: '单耳4.9g' }
+                ]
+            }
+        };
+
+        // 设备详情弹窗功能
+        const detailOverlay = document.getElementById('detailOverlay');
+        const detailClose = document.getElementById('detailClose');
+        const detailContent = document.getElementById('detailContent');
+        const viewDetailsButtons = document.querySelectorAll('.view-details');
+        const deviceCards = document.querySelectorAll('.device-card');
+
+        // 打开详情弹窗
+        function openDetailModal(deviceId) {
+            const device = deviceDetails[deviceId];
+            if (!device) return;
+
+            // 填充弹窗内容
+            detailContent.innerHTML = `
+                <div class="detail-header">
+                    <h2 class="detail-title">${device.title}</h2>
+                    <p class="detail-subtitle">${device.subtitle}</p>
+                </div>
+                <div class="detail-image" style="background: ${device.image}"></div>
+                <div class="detail-specs">
+                    ${device.specs.map(spec => `
+                        <div class="detail-spec-item">
+                            <div class="detail-spec-label">${spec.label}</div>
+                            <div class="detail-spec-value">${spec.value}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="detail-description">
+                    <p>${device.description}</p>
+                </div>
+            `;
+
+            // 显示弹窗
+            detailOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭详情弹窗
+        function closeDetailModal() {
+            detailOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 绑定事件
+        viewDetailsButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const deviceCard = button.closest('.device-card');
+                const deviceId = deviceCard.dataset.device;
+                openDetailModal(deviceId);
+            });
+        });
+
+        deviceCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const deviceId = card.dataset.device;
+                openDetailModal(deviceId);
+            });
+        });
+
+        detailClose.addEventListener('click', closeDetailModal);
+
+        detailOverlay.addEventListener('click', (e) => {
+            if (e.target === detailOverlay) {
+                closeDetailModal();
+            }
+        });
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && detailOverlay.classList.contains('active')) {
+                closeDetailModal();
+            }
+        });
+    </script>
+</body>
+</html>

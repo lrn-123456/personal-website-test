@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L rn的图片库</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #515154;
+            --text-tertiary: #86868b;
+            --accent-color: #06c;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .dark-mode {
+            --bg-primary: #000;
+            --bg-secondary: #1d1d1f;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent-color: #2997ff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        /* 全局过渡效果 */
+        body, nav, .announcement-banner, .category-card, .featured-card,
+        .site-map-links a, .assistance-item a, .player-btn,
+        .progress-container, .volume-slider, .album-cover,
+        .hero, .hero h1, .assistance-item, .featured-section, 
+        .featured-section .section-title, .featured-card, 
+        .featured-card h3, .featured-card h3 a,
+        .featured-card .date, .featured-card .excerpt,
+        .site-map-section h3, .site-map-links li, .site-map-links a,
+        .image-card, .modal, .modal-content, .modal-close {
+            transition: var(--transition);
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.47059;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 - 苹果风格 */
+        nav {
+            background-color: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dark-mode nav {
+            background-color: rgba(29, 29, 31, 0.72);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        /* 公告横幅 */
+        .announcement-banner {
+            background: linear-gradient(to right, #f5f5f7, #fff, #f5f5f7);
+            text-align: center;
+            padding: 14px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .dark-mode .announcement-banner {
+            background: linear-gradient(to right, #000, #1d1d1f, #000);
+        }
+        
+        .announcement-banner a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        /* 主标语区域 */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+            background-color: var(--bg-primary);
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        .assistance-section {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .assistance-item {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .assistance-item a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+        
+        /* 图片展示区域 */
+        .gallery-section {
+            padding: 20px 0 60px;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .image-card {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        
+        .image-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .image-card:hover .image-container img {
+            transform: scale(1.05);
+        }
+        
+        .image-info {
+            padding: 0 5px;
+        }
+        
+        .image-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .image-date {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+        }
+        
+        .image-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-info {
+            width: 100%;
+            text-align: center;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        
+        .modal-date {
+            font-size: 16px;
+            color: var(--text-tertiary);
+            margin-bottom: 15px;
+        }
+        
+        .modal-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .modal-close:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .modal-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="main.html" class="active">首页</a></li>
+                <li><a href="tech.html">资源</a></li>
+                <li><a href="photography.html">摄影</a></li>
+                <li><a href="devices.html">设备</a></li>
+                <li><a href="vr.html">VR</a></li>
+                <li><a href="about.html">关于</a></li>
+                <li><a href="contact.html">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 公告横幅 -->
+    <div class="announcement-banner">
+        我的B站主页  <a href="https://space.bilibili.com/3494363069941880?spm_id_from=333.1007.0.0" target="_blank">立即前往 →</a>
+    </div>
+
+    <div class="container">
+        <!-- 主标语区域 -->
+        <section class="hero">
+            <h1>我的图片库</h1>
+            <div class="assistance-section">
+                <div class="assistance-item">
+                    <span>精选图片展示</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 图片展示区域 -->
+        <section class="gallery-section">
+            <h2 class="section-title">图片展示</h2>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- 图片卡片将通过JavaScript动态生成 -->
+            </div>
+        </section>
+    </div>
+
+    <!-- 图片模态框 -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-info">
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <div class="modal-date" id="modalDate"></div>
+                <p class="modal-description" id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        });
+
+        // 图片数据 - 从JSON文件加载
+        let imageData = [];
+
+        // 从JSON文件加载图片数据
+        async function loadImageData() {
+            try {
+                const response = await fetch('images.json');
+                if (!response.ok) {
+                    throw new Error('JSON文件加载失败');
+                }
+                imageData = await response.json();
+                renderGallery();
+            } catch (error) {
+                console.error('加载图片数据失败:', error);
+                // 如果JSON文件不存在，使用示例数据
+                imageData = [
+                    {
+                        "filename": "和朋友",
+                        "url": "PIC/1.jpg",
+                        "description": "在KTV拍摄",
+                        "time": "2025-8-11"
+                    },
+                    {
+                        "filename": "泉奈喷火",
+                        "url": "PIC/2.jpg",
+                        "description": "在我生日时拍的，吓我一大跳",
+                        "time": "2025-8-22"
+                    },
+                    {
+                        "filename": "小春战斗脸",
+                        "url": "PIC/3.jpg",
+                        "description": "可爱捏",
+                        "time": "2025-8-22"
+                    },
+                    {
+                        "filename": "照片墙",
+                        "url": "PIC/4.jpg",
+                        "description": "摄影师很厉害！拍的好好",
+                        "time": "2025-8-25"
+                    },
+                    {
+                        "filename": "不礼貌的Lapwing",
+                        "url": "PIC/5.jpg",
+                        "description": "好孩子不要学",
+                        "time": "2025-8-31"
+                    },
+                    {
+                        "filename": "神秘的旗帜",
+                        "url": "PIC/6.jpg",
+                        "description": "细节91",
+                        "time": "2023-9-1"
+                    },
+                    {
+                        "filename": "只有玩VRC的才懂这个",
+                        "url": "PIC/7.jpg",
+                        "description": "我看了好久才认出来哪面是真的",
+                        "time": "2024-11-30"
+                    },
+                    {
+                        "filename": "丢追",
+                        "url": "PIC/8.jpg",
+                        "description": "万恶的qhu突然断我电",
+                        "time": "2025-10-6"
+                    },
+                    {
+                        "filename": "两个小春",
+                        "url": "PIC/9.jpg",
+                        "description": "世纪级会面",
+                        "time": "2025-8-21"
+                    },
+                    {
+                        "filename": "兄弟和小春",
+                        "url": "PIC/10.jpg",
+                        "description": "兄弟你好香（其实就是我）",
+                        "time": "2025-8-21"
+                    },
+                    {
+                        "filename": "伊落玛丽",
+                        "url": "PIC/11.jpg",
+                        "description": "对玛导至昏...",
+                        "time": "2025-8-21"
+                    },
+                    {
+                        "filename": "悍匪胡桃",
+                        "url": "PIC/12.jpg",
+                        "description": "究竟是谁在制作这些模型",
+                        "time": "2025-8-21"
+                    },
+                    {
+                        "filename": "一致对外",
+                        "url": "PIC/13.jpg",
+                        "description": "兄弟帅爆了",
+                        "time": "2025-8-21"
+                    },
+                    {
+                        "filename": "小兔姬",
+                        "url": "PIC/14.jpg",
+                        "description": "可爱",
+                        "time": "2024-8-21"
+                    },
+                    {
+                        "filename": "大合照",
+                        "url": "PIC/15.jpg",
+                        "description": "我是C位玲纱哦",
+                        "time": "2025-8-22"
+                    }
+                ];
+                renderGallery();
+            }
+        }
+
+        // 渲染图片库
+        function renderGallery() {
+            const galleryGrid = document.getElementById('galleryGrid');
+            galleryGrid.innerHTML = '';
+
+            imageData.forEach((item, index) => {
+                const imageCard = document.createElement('div');
+                imageCard.className = 'image-card';
+                imageCard.setAttribute('data-index', index);
+                
+                imageCard.innerHTML = `
+                    <div class="image-container">
+                        <img src="${item.url}" alt="${item.filename}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPua1i+ivlOaWh+acrDwvdGV4dD48L3N2Zz4='">
+                    </div>
+                    <div class="image-info">
+                        <h3 class="image-title">${item.filename}</h3>
+                        <div class="image-date">${item.time}</div>
+                        <p class="image-description">${item.description}</p>
+                    </div>
+                `;
+                
+                imageCard.addEventListener('click', () => openModal(index));
+                galleryGrid.appendChild(imageCard);
+            });
+        }
+
+        // 模态框功能
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDate = document.getElementById('modalDate');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalClose = document.getElementById('modalClose');
+
+        function openModal(index) {
+            const item = imageData[index];
+            modalImage.src = item.url;
+            modalImage.alt = item.filename;
+            modalTitle.textContent = item.filename;
+            modalDate.textContent = item.time;
+            modalDescription.textContent = item.description;
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // 键盘事件支持
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                closeModal();
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadImageData();
+        });
+    </script>
+</body>
+</html>

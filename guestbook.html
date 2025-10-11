@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言板 - L rn的网页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #515154;
+            --text-tertiary: #86868b;
+            --accent-color: #06c;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .dark-mode {
+            --bg-primary: #000;
+            --bg-secondary: #1d1d1f;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent-color: #2997ff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        /* 全局过渡效果 */
+        body, nav, .announcement-banner, .category-card, .featured-card,
+        .site-map-links a, .assistance-item a, .player-btn,
+        .progress-container, .volume-slider, .album-cover,
+        .hero, .hero h1, .assistance-item, .featured-section, 
+        .featured-section .section-title, .featured-card, 
+        .featured-card h3, .featured-card h3 a,
+        .featured-card .date, .featured-card .excerpt,
+        .site-map-section h3, .site-map-links li, .site-map-links a,
+        .message-card, .message-content, .message-meta, .message-author,
+        .message-form, .form-group, .form-input, .form-textarea, .form-checkbox {
+            transition: var(--transition);
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.47059;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 - 苹果风格 */
+        nav {
+            background-color: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dark-mode nav {
+            background-color: rgba(29, 29, 31, 0.72);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        /* 公告横幅 */
+        .announcement-banner {
+            background: linear-gradient(to right, #f5f5f7, #fff, #f5f5f7);
+            text-align: center;
+            padding: 14px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .dark-mode .announcement-banner {
+            background: linear-gradient(to right, #000, #1d1d1f, #000);
+        }
+        
+        .announcement-banner a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        /* 主标语区域 */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+            background-color: var(--bg-primary);
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        .assistance-section {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .assistance-item {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .assistance-item a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+        
+        /* 留言区域 */
+        .messages-section {
+            padding: 40px 0;
+        }
+        
+        .messages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+        
+        .message-card {
+            background-color: var(--bg-secondary);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .message-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .message-content {
+            color: var(--text-primary);
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+        
+        .message-author {
+            font-weight: 500;
+        }
+        
+        .anonymous {
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+        
+        /* 留言表单 */
+        .message-form {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            margin-top: 40px;
+        }
+        
+        .form-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--text-tertiary);
+            border-radius: 12px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-checkbox input {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .form-submit {
+            background-color: #555; /* 深灰色 */
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .form-submit:hover {
+            background-color: #888; /* 浅灰色 */
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .messages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="main.html">首页</a></li>
+                <li><a href="tech.html">资源</a></li>
+                <li><a href="photography.html">摄影</a></li>
+                <li><a href="devices.html">设备</a></li>
+                <li><a href="vr.html">VR</a></li>
+                <li><a href="about.html">关于</a></li>
+                <li><a href="contact.html">联系</a></li>
+                <li><a href="guestbook.html" class="active">留言板</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 公告横幅 -->
+    <div class="announcement-banner">
+        欢迎来到留言板，您可以在这里留下您的想法和建议  <a href="https://space.bilibili.com/3494363069941880?spm_id_from=333.1007.0.0" target="_blank">点击访问我的B站主页 →</a>
+    </div>
+
+    <div class="container">
+        <!-- 主标语区域 -->
+        <section class="hero">
+            <h1>留言板</h1>
+            <div class="assistance-section">
+                <div class="assistance-item">
+                    <span>分享您的想法</span>
+                </div>
+                <div class="assistance-item">
+                    <span>所有人可见的留言</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 留言展示区域 -->
+        <section class="messages-section">
+            <h2 class="section-title">所有留言</h2>
+            <div class="messages-grid" id="messagesContainer">
+                <!-- 留言将通过JavaScript动态添加 -->
+            </div>
+            
+            <!-- 留言表单 -->
+            <div class="message-form">
+                <h3 class="form-title">发表留言</h3>
+                <form id="messageForm">
+                    <div class="form-group">
+                        <textarea class="form-textarea" id="messageContent" placeholder="请输入您的留言内容..." required></textarea>
+                    </div>
+                    <div class="form-group form-checkbox">
+                        <input type="checkbox" id="anonymous">
+                        <label for="anonymous">匿名留言</label>
+                    </div>
+                    <button type="submit" class="form-submit">提交留言</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        });
+
+        // 留言功能
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageForm = document.getElementById('messageForm');
+        const messageContent = document.getElementById('messageContent');
+        const anonymousCheckbox = document.getElementById('anonymous');
+        
+        // 从localStorage加载留言
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('guestbookMessages')) || [];
+            messagesContainer.innerHTML = '';
+            
+            if (messages.length === 0) {
+                messagesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-tertiary);">暂无留言，成为第一个留言的人吧！</p>';
+                return;
+            }
+            
+            messages.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message-card';
+                messageElement.innerHTML = `
+                    <div class="message-content">${message.content}</div>
+                    <div class="message-meta">
+                        <span class="message-author ${message.anonymous ? 'anonymous' : ''}">
+                            ${message.anonymous ? '匿名用户' : message.author}
+                        </span>
+                        <span class="message-date">${message.date}</span>
+                    </div>
+                `;
+                messagesContainer.appendChild(messageElement);
+            });
+        }
+        
+        // 提交新留言
+        messageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const content = messageContent.value;
+            const anonymous = anonymousCheckbox.checked;
+            const author = '访客'; // 在实际应用中，这里可以从登录信息获取
+            
+            if (!content.trim()) {
+                alert('请输入留言内容！');
+                return;
+            }
+            
+            const newMessage = {
+                content: content.trim(),
+                author: author,
+                anonymous: anonymous,
+                date: new Date().toLocaleString('zh-CN')
+            };
+            
+            // 保存到localStorage
+            const messages = JSON.parse(localStorage.getItem('guestbookMessages')) || [];
+            messages.unshift(newMessage);
+            localStorage.setItem('guestbookMessages', JSON.stringify(messages));
+            
+            // 重新加载留言
+            loadMessages();
+            
+            // 重置表单
+            this.reset();
+            
+            // 显示成功消息
+            alert('留言提交成功！');
+        });
+        
+        // 初始化加载留言
+        loadMessages();
+    </script>
+</body>
+</html>

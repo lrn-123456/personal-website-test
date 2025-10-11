@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>了解更多</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #515154;
+            --text-tertiary: #86868b;
+            --accent-color: #06c;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .dark-mode {
+            --bg-primary: #000;
+            --bg-secondary: #1d1d1f;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent-color: #2997ff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        /* 全局过渡效果 */
+        body, nav, .announcement-banner, .category-card, .featured-card,
+        .site-map-links a, .assistance-item a, .player-btn,
+        .progress-container, .volume-slider, .album-cover,
+        .hero, .hero h1, .assistance-item, .featured-section, 
+        .featured-section .section-title, .featured-card, 
+        .featured-card h3, .featured-card h3 a,
+        .featured-card .date, .featured-card .excerpt,
+        .site-map-section h3, .site-map-links li, .site-map-links a {
+            transition: var(--transition);
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.47059;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 - 苹果风格 */
+        nav {
+            background-color: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dark-mode nav {
+            background-color: rgba(29, 29, 31, 0.72);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        /* 公告横幅 */
+        .announcement-banner {
+            background: linear-gradient(to right, #f5f5f7, #fff, #f5f5f7);
+            text-align: center;
+            padding: 14px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .dark-mode .announcement-banner {
+            background: linear-gradient(to right, #000, #1d1d1f, #000);
+        }
+        
+        .announcement-banner a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        /* 主标语区域 */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+            background-color: var(--bg-primary);
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        .hero p {
+            font-size: 22px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.4;
+        }
+        
+        .assistance-section {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .assistance-item {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .assistance-item a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+        
+        /* 内容区域 */
+        .content-section {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="main.html">首页</a></li>
+                <li><a href="tech.html">资源</a></li>
+                <li><a href="photography.html">摄影</a></li>
+                <li><a href="devices.html">设备</a></li>
+                <li><a href="vr.html">VR</a></li>
+                <li><a href="about.html" class="active">关于</a></li>
+                <li><a href="contact.html">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 公告横幅 -->
+    <div class="announcement-banner">
+        最新作品已发布  <a href="https://space.bilibili.com/3494363069941880?spm_id_from=333.1007.0.0">欣赏新视频 →</a>
+    </div>
+
+    <div class="container">
+        <!-- 主标语区域 -->
+        <section class="hero" id="home">
+            <h1>自动化网页设计</h1>
+            <p>质量与难度的完美平衡，提供卓越的开发体验</p>
+            <div class="assistance-section">
+                <div class="assistance-item">
+                    <span>了解更多信息?</span>
+                    <a href="#about">查看详情</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能特点区域 -->
+        <section class="content-section" id="features">
+            <h2 class="section-title">这是什么？</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>优雅的设计</h3>
+                    <p>采用现代风格设计语言，注重细节和用户体验，提供视觉上的愉悦感。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <h3>深色模式</h3>
+                    <p>支持平滑的亮暗模式切换，保护用户眼睛，提供舒适的阅读体验。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>极致性能</h3>
+                    <p>优化的代码结构和资源加载策略，确保页面快速加载和流畅交互。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>响应式布局</h3>
+                    <p>完美适配各种设备尺寸，从手机到桌面电脑都能提供一致的使用体验。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>现代化技术</h3>
+                    <p>使用最新的Web技术标准，确保网站的长期可维护性和扩展性。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>高度可定制</h3>
+                    <p>自然语言编程允许根据需求灵活调整功能和外观，满足个性化需求。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于区域 -->
+        <section class="content-section" id="about">
+            <h2 class="section-title">设计理念</h2>
+            <div class="feature-card">
+                <h3>简约而不简单</h3>
+                <p>我们的设计哲学是"少即是多"。我们相信优秀的设计应该专注于本质，去除不必要的元素，让用户能够专注于内容本身。</p>
+                <p>通过精心的排版、恰当的色彩运用和微妙的动画效果，我们创造出既美观又实用的界面，让每一次交互都成为一种享受。</p>
+                
+                <h3 style="margin-top: 30px;">我是用AI写的</h3>
+                <p>你说了我说什么？</p>
+                <p>说点大伙不知道的</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        });
+
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

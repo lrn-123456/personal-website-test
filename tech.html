@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源库</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #515154;
+            --text-tertiary: #86868b;
+            --accent-color: #06c;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .dark-mode {
+            --bg-primary: #000;
+            --bg-secondary: #1d1d1f;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent-color: #2997ff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        body, nav, .link-card {
+            transition: var(--transition);
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.47059;
+            padding-bottom: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式*/
+        nav {
+            background-color: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dark-mode nav {
+            background-color: rgba(29, 29, 31, 0.72);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        /* 主内容区域 */
+        .hero {
+            text-align: center;
+            padding: 80px 0 40px;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        
+        /* 链接卡片网格 */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 60px 0;
+        }
+        
+        .link-card {
+            background-color: var(--bg-secondary);
+            border-radius: 18px;
+            padding: 30px 25px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .link-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            background-color: var(--text-tertiary);
+            color: var(--bg-secondary);
+            font-size: 28px;
+        }
+        
+        .link-card h3 {
+            font-size: 19px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .link-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .links-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="main.html">首页</a></li>
+                <li><a href="tech.html" class="active">资源</a></li>
+                <li><a href="photography.html">摄影</a></li>
+                <li><a href="devices.html">设备</a></li>
+                <li><a href="vr.html">VR</a></li>
+                <li><a href="about.html">关于</a></li>
+                <li><a href="contact.html">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 主标语区域 -->
+        <section class="hero">
+            <h1>我的资源库</h1>
+            <p>一些奇思妙想和想要展示的东西</p>
+        </section>
+
+        <!-- 链接卡片网格 -->
+        <section class="links-grid">
+            <a href="photography.html" class="link-card">
+                <div class="link-icon">📷</div>
+                <h3>摄影作品</h3>
+                <p>欣赏精选的摄影作品和技巧分享</p>
+            </a>
+            <a href="vr.html" class="link-card">
+                <div class="link-icon">🎮</div>
+                <h3>VR体验</h3>
+                <p>探索虚拟现实世界的最新动态</p>
+            </a>
+            <a href="about.html" class="link-card">
+                <div class="link-icon">💻</div>
+                <h3>网页开发</h3>
+                <p>分享一些自然语言编程心得</p>
+            </a>
+            <a href="tech.html" class="link-card">
+                <div class="link-icon">🤖</div>
+                <h3>智能助手（开发中）</h3>
+                <p>一个基于网页的小ai</p>
+            </a>
+            <a href="devices.html" class="link-card">
+                <div class="link-icon">📱</div>
+                <h3>科技设备</h3>
+                <p>我现在在使用的科技产品</p>
+            </a>
+        </section>
+    </div>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        });
+
+        // 交互效果
+        document.querySelectorAll('.link-card').forEach(card => {
+            card.addEventListener('click', function (e) {
+                const linkName = this.querySelector('h3').textContent;
+                console.log(`导航到 ${linkName} 页面`);
+            });
+        });
+    </script>
+</body>
+</html>
