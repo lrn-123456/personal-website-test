@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>液态玻璃效果网页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #515154;
+            --text-tertiary: #86868b;
+            --accent-color: #06c;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .dark-mode {
+            --bg-primary: #000;
+            --bg-secondary: #1d1d1f;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent-color: #2997ff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.47059;
+            padding-bottom: 80px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 */
+        nav {
+            background-color: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dark-mode nav {
+            background-color: rgba(29, 29, 31, 0.72);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            text-align: center;
+            padding: 80px 0 60px;
+            background-color: var(--bg-primary);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main-content h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        .main-content p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        
+        /* 液态玻璃效果样式 */
+        .liquid-glass {
+            width: 300px;
+            height: 200px;
+            border-radius: 56.00000000000001px;
+            position: relative;
+            isolation: isolate;
+            box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 0;
+            text-decoration: none;
+            cursor: pointer;
+            position: absolute;
+            z-index: 10;
+        }
+
+        .liquid-glass:focus {
+            outline: none;
+        }
+
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            border-radius: 56.00000000000001px;
+            box-shadow: inset 0 0 0px -20px #000000;
+            background-color: rgba(255, 255, 255, 0);
+        }
+
+        .liquid-glass::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            border-radius: 56.00000000000001px;
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            filter: url(#glass-distortion);
+            -webkit-filter: url(#glass-distortion);
+        }
+
+        /* 大型文本背景 */
+        .text-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .text-content {
+            font-size: 120px;
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.03);
+            text-align: center;
+            line-height: 1;
+            max-width: 90%;
+            word-break: break-word;
+            font-family: 'Georgia', 'Microsoft YaHei', '微软雅黑', serif;
+        }
+        
+        .dark-mode .text-content {
+            color: rgba(255, 255, 255, 0.03);
+        }
+        
+        /* 添加按钮 */
+        .add-glass-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            border: none;
+            transition: transform 0.3s ease;
+        }
+        
+        .add-glass-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 删除按钮 */
+        .remove-glass-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #ff3b30;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            border: none;
+            transition: transform 0.3s ease;
+        }
+        
+        .remove-glass-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .remove-glass-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 液态玻璃容器 */
+        .glass-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .glass-container > * {
+            pointer-events: auto;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .main-content h1 {
+                font-size: 36px;
+            }
+            
+            .text-content {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- SVG滤镜定义 -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <defs>
+            <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="2" seed="92" result="noise" />
+                <feGaussianBlur in="noise" stdDeviation="2" result="blurred" />
+                <feDisplacementMap in="SourceGraphic" in2="blurred" scale="193" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- 大型文本背景 -->
+    <div class="text-background" id="textBackground">
+        <div class="text-content" id="textContent">1</div>
+    </div>
+    
+    <!-- 液态玻璃容器 -->
+    <div class="glass-container" id="glassContainer"></div>
+    
+    <!-- 添加按钮 -->
+    <button class="add-glass-btn" id="addGlassBtn">+</button>
+    
+    <!-- 删除按钮 -->
+    <button class="remove-glass-btn" id="removeGlassBtn" disabled>-</button>
+
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="main.html" class="active">首页</a></li>
+                <li><a href="tech.html">资源</a></li>
+                <li><a href="photography.html">摄影</a></li>
+                <li><a href="devices.html">设备</a></li>
+                <li><a href="vr.html">VR</a></li>
+                <li><a href="about.html">关于</a></li>
+                <li><a href="contact.html">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <p class="container">
+        <section class="main-content">
+            <h1>液态玻璃效果展示</h1>
+            <p>这是一个展示液态玻璃效果的网页。点击左下角的"+"按钮可以添加液态玻璃元素，点击右下角的"-"按钮可以按生成顺序删除液态玻璃元素。</p>
+            <p>液态玻璃效果通过SVG滤镜实现，具有独特的视觉效果。您可以通过拖动来移动液态玻璃元素的位置。</p>
+            <p>液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass</p>
+            <p>液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass</p>
+            <p>液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass液态玻璃效果liquidGlass</p>
+        </section>
+    </div>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+            
+            // 更新背景文字颜色
+            updateTextColor();
+        });
+
+        // 更新背景文字颜色
+        function updateTextColor() {
+            const textContent = document.getElementById('textContent');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            textContent.style.color = isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)';
+        }
+
+        // 液态玻璃效果
+        let glassCount = 0;
+        let glassQueue = []; // 用于存储液态玻璃元素的队列
+        
+        function createLiquidGlass() {
+            glassCount++;
+            
+            const glassContainer = document.getElementById('glassContainer');
+            const glass = document.createElement('div');
+            glass.className = 'liquid-glass';
+            glass.id = 'glass-' + glassCount;
+            
+            // 随机位置，避免重叠
+            const maxX = window.innerWidth - 300;
+            const maxY = window.innerHeight - 200;
+            const randomX = Math.max(0, Math.min(maxX, Math.random() * maxX));
+            const randomY = Math.max(0, Math.min(maxY, Math.random() * maxY));
+            
+            glass.style.left = randomX + 'px';
+            glass.style.top = randomY + 'px';
+            
+            glassContainer.appendChild(glass);
+            
+            // 将新创建的玻璃添加到队列
+            glassQueue.push(glass.id);
+            
+            // 更新删除按钮状态
+            updateRemoveButtonState();
+            
+            // 添加拖动功能
+            makeDraggable(glass);
+            
+            return glass;
+        }
+        
+        // 移除液态玻璃
+        function removeLiquidGlass(glassId) {
+            const glass = document.getElementById(glassId);
+            if (glass) {
+                // 从DOM中移除
+                glass.remove();
+                
+                // 从队列中移除
+                const index = glassQueue.indexOf(glassId);
+                if (index !== -1) {
+                    glassQueue.splice(index, 1);
+                }
+                
+                // 更新删除按钮状态
+                updateRemoveButtonState();
+            }
+        }
+        
+        // 按生成顺序删除最后一个液态玻璃
+        function removeLastLiquidGlass() {
+            if (glassQueue.length > 0) {
+                const lastGlassId = glassQueue.shift(); // 从队列开头移除（先进先出）
+                const glass = document.getElementById(lastGlassId);
+                if (glass) {
+                    glass.remove();
+                }
+                
+                // 更新删除按钮状态
+                updateRemoveButtonState();
+            }
+        }
+        
+        // 更新删除按钮状态
+        function updateRemoveButtonState() {
+            const removeBtn = document.getElementById('removeGlassBtn');
+            if (glassQueue.length === 0) {
+                removeBtn.disabled = true;
+            } else {
+                removeBtn.disabled = false;
+            }
+        }
+        
+        // 使元素可拖动
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            element.onmousedown = dragMouseDown;
+            
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                
+                // 获取鼠标初始位置
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+            
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                
+                // 计算新位置
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                // 设置元素新位置
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+            
+            function closeDragElement() {
+                // 停止移动
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+        
+        // 添加按钮事件
+        document.getElementById('addGlassBtn').addEventListener('click', function() {
+            createLiquidGlass();
+        });
+        
+        // 删除按钮事件
+        document.getElementById('removeGlassBtn').addEventListener('click', function() {
+            removeLastLiquidGlass();
+        });
+        
+        // 页面加载时创建初始液态玻璃
+        window.addEventListener('load', function() {
+            createLiquidGlass(); // 创建一个初始的液态玻璃
+        });
+    </script>
+</body>
+</html>
