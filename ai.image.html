@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L rn的网页 - AI图像生成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #515154;
+            --text-tertiary: #86868b;
+            --accent-color: #06c;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
+                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .dark-mode {
+            --bg-primary: #000;
+            --bg-secondary: #1d1d1f;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent-color: #2997ff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.47059;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 导航栏样式 */
+        nav {
+            background-color: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+        }
+
+        .dark-mode nav {
+            background-color: rgba(29, 29, 31, 0.72);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        /* 公告横幅 */
+        .announcement-banner {
+            background: linear-gradient(to right, #f5f5f7, #fff, #f5f5f7);
+            text-align: center;
+            padding: 14px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            width: 100%;
+        }
+
+        .dark-mode .announcement-banner {
+            background: linear-gradient(to right, #000, #1d1d1f, #000);
+        }
+        
+        .announcement-banner a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        /* AI图像生成区域 */
+        .image-generation-section {
+            flex: 1;
+            margin: 40px 0 60px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .generation-container {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 1440px;
+            width: 100%;
+        }
+        
+        .generation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .generation-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .model-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .model-selector select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--text-tertiary);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-width: 200px;
+        }
+        
+        .clear-btn {
+            padding: 8px 16px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        /* 提示词区域 */
+        .prompt-section {
+            margin-bottom: 20px;
+            background-color: var(--bg-primary);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid var(--text-tertiary);
+            width: 100%;
+        }
+        
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .prompt-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .prompt-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--text-tertiary);
+            border-radius: 10px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            resize: vertical;
+            min-height: 100px;
+            font-size: 14px;
+        }
+        
+        /* 参数控制区域 */
+        .parameters-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .parameter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .parameter-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .parameter-value {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--text-tertiary);
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+        
+        /* 图片上传区域 */
+        .upload-section {
+            margin-bottom: 20px;
+            background-color: var(--bg-primary);
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px dashed var(--text-tertiary);
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-section.drag-over {
+            border-color: var(--accent-color);
+            background-color: rgba(0, 102, 204, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 40px;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        
+        .upload-btn {
+            padding: 8px 16px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--text-tertiary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .upload-btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        .upload-preview {
+            margin-top: 15px;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        /* 生成按钮 */
+        .generate-btn {
+            padding: 12px 24px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .generate-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* 结果区域 */
+        .results-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .result-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            background-color: var(--bg-primary);
+        }
+        
+        .result-image {
+            width: 100%;
+            display: block;
+        }
+        
+        .download-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        
+        .download-btn:hover {
+            opacity: 1;
+        }
+        
+        .dark-mode .download-btn {
+            background-color: rgba(29, 29, 31, 0.8);
+            color: white;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .dark-mode .loading-overlay {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--text-tertiary);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .generation-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .model-selector {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .model-selector select {
+                min-width: 150px;
+                flex: 1;
+            }
+            
+            .parameters-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .generation-container {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="main.html" class="active">首页</a></li>
+
+                <li><a href="photography.html">摄影</a></li>
+                <li><a href="tech.html">资源</a></li>
+                <li><a href="devices.html">设备</a></li>
+                <li><a href="vr.html">VR</a></li>
+                <li><a href="ai.home.html">AI</a></li>
+                <li><a href="about.html">关于</a></li>
+                <li><a href="contact.html">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 公告横幅 -->
+    <div class="announcement-banner">
+        我的B站主页  <a href="https://space.bilibili.com/3494363069941880?spm_id_from=333.1007.0.0" target="_blank">立即前往 →</a>
+    </div>
+
+    <div class="container">
+        <!-- AI图像生成区域 -->
+        <section class="image-generation-section">
+            <div class="generation-container">
+                <div class="generation-header">
+                    <h2>AI图像生成</h2>
+                    <div class="model-selector">
+                        <select id="modelSelect">
+                            <option value="Kwai-Kolors/Kolors" selected>Kwai-Kolors/Kolors</option>  #模型列表#
+                        </select>
+                        <button class="clear-btn" id="clearBtn">清空设置</button>
+                    </div>
+                </div>
+                
+                <!-- 提示词区域 -->
+                <div class="prompt-section">
+                    <div class="prompt-header">
+                        <h3>提示词</h3>
+                    </div>
+                    <textarea class="prompt-textarea" id="promptTextarea" placeholder="描述您想要生成的图像..."></textarea>
+                </div>
+                
+                <!-- 参数控制区域 -->
+                <div class="parameters-section">
+                    <div class="parameter-group">
+                        <div class="parameter-label">
+                            <span>图像质量</span>
+                            <span class="parameter-value" id="qualityValue">标准</span>
+                        </div>
+                        <input type="range" min="1" max="3" value="2" class="slider" id="qualitySlider">
+                    </div>
+                    
+                    <div class="parameter-group">
+                        <div class="parameter-label">
+                            <span>创意度</span>
+                            <span class="parameter-value" id="creativityValue">中等</span>
+                        </div>
+                        <input type="range" min="1" max="5" value="3" class="slider" id="creativitySlider">
+                    </div>
+                    
+                    <div class="parameter-group">
+                        <div class="parameter-label">
+                            <span>图像尺寸</span>
+                            <span class="parameter-value" id="sizeValue">1024×1024</span>
+                        </div>
+                        <select id="sizeSelect" class="slider">
+                            <option value="512x512">512×512</option>
+                            <option value="768x768">768×768</option>
+                            <option value="1024x1024" selected>1024×1024</option>
+                            <option value="1024x1792">1024×1792</option>
+                            <option value="1792x1024">1792×1024</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 图片上传区域 -->
+                <div class="upload-section" id="uploadSection">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text">拖放图片到此处，或点击上传参考图片</p>
+                    <button class="upload-btn" id="uploadBtn">选择图片</button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    <img class="upload-preview" id="uploadPreview" alt="预览图片">
+                </div>
+                
+                <!-- 生成按钮 -->
+                <button class="generate-btn" id="generateBtn">
+                    <i class="fas fa-magic"></i> 生成图像
+                </button>
+                
+                <!-- 结果区域 -->
+                <div class="results-section" id="resultsSection">
+                    <div class="result-item">
+                        <img class="result-image" alt="生成的图片" style="display: none;">
+                        <div class="loading-overlay" style="display: none;">
+                            <div class="spinner"></div>
+                            <p>生成中...</p>
+                        </div>
+                        <button class="download-btn" style="display: none;">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        });
+
+        // 参数控制
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityValue = document.getElementById('qualityValue');
+        const creativitySlider = document.getElementById('creativitySlider');
+        const creativityValue = document.getElementById('creativityValue');
+        const sizeSelect = document.getElementById('sizeSelect');
+        const sizeValue = document.getElementById('sizeValue');
+
+        const qualityLabels = ['基础', '标准', '高质量'];
+        const creativityLabels = ['低', '中低', '中等', '中高', '高'];
+
+        qualitySlider.addEventListener('input', () => {
+            qualityValue.textContent = qualityLabels[qualitySlider.value - 1];
+        });
+
+        creativitySlider.addEventListener('input', () => {
+            creativityValue.textContent = creativityLabels[creativitySlider.value - 1];
+        });
+
+        sizeSelect.addEventListener('change', () => {
+            sizeValue.textContent = sizeSelect.value.replace('x', '×');
+        });
+
+        // 图片上传功能
+        const uploadSection = document.getElementById('uploadSection');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
+        const uploadPreview = document.getElementById('uploadPreview');
+
+        // 拖放功能
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('drag-over');
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('drag-over');
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('drag-over');
+            
+            if (e.dataTransfer.files.length) {
+                handleImageUpload(e.dataTransfer.files[0]);
+            }
+        });
+
+        // 点击上传
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleImageUpload(fileInput.files[0]);
+            }
+        });
+
+        function handleImageUpload(file) {
+            if (!file.type.match('image.*')) {
+                alert('请上传图像文件');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadPreview.src = e.target.result;
+                uploadPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 生成图像功能
+        const generateBtn = document.getElementById('generateBtn');
+        const promptTextarea = document.getElementById('promptTextarea');
+        const resultsSection = document.getElementById('resultsSection');
+        const API_KEY = 'sk-ucdtvohtqrhygmxxaeiszibfsiozoygcyxsqqfuosazxktwu';
+        const API_URL = 'https://api.siliconflow.cn/v1/images/generations';
+
+        generateBtn.addEventListener('click', async () => {
+            const prompt = promptTextarea.value.trim();
+            if (!prompt) {
+                alert('请输入提示词');
+                return;
+            }
+
+            // 显示加载状态
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
+            
+            const resultItem = resultsSection.querySelector('.result-item');
+            const loadingOverlay = resultItem.querySelector('.loading-overlay');
+            const resultImage = resultItem.querySelector('.result-image');
+            const downloadBtn = resultItem.querySelector('.download-btn');
+            
+            loadingOverlay.style.display = 'flex';
+            resultImage.style.display = 'none';
+            downloadBtn.style.display = 'none';
+
+            try {
+                // 构建请求数据
+                const requestData = {
+                    model: document.getElementById('modelSelect').value, // 使用选择的模型
+                    prompt: prompt,
+                    size: sizeSelect.value,
+                    n: 1,
+                    quality: qualityLabels[qualitySlider.value - 1].toLowerCase(),
+                    style: creativityLabels[creativitySlider.value - 1].toLowerCase()
+                };
+
+                // 如果有上传的图片，添加到请求中
+                if (uploadPreview.style.display === 'block') {
+                    requestData.image = uploadPreview.src;
+                }
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // 显示生成的图片
+                resultImage.src = data.data[0].url;
+                resultImage.style.display = 'block';
+                downloadBtn.style.display = 'flex';
+                
+                // 设置下载功能
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = data.data[0].url;
+                    a.download = 'ai-generated-image.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+
+            } catch (error) {
+                console.error('生成图像时出错:', error);
+                alert('生成图像时出错，请重试');
+            } finally {
+                // 恢复按钮状态
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-magic"></i> 生成图像';
+                loadingOverlay.style.display = 'none';
+            }
+        });
+
+        // 清空设置
+        const clearBtn = document.getElementById('clearBtn');
+        clearBtn.addEventListener('click', () => {
+            promptTextarea.value = '';
+            qualitySlider.value = 2;
+            qualityValue.textContent = '标准';
+            creativitySlider.value = 3;
+            creativityValue.textContent = '中等';
+            sizeSelect.value = '1024x1024';
+            sizeValue.textContent = '1024×1024';
+            uploadPreview.style.display = 'none';
+            uploadPreview.src = '';
+            
+            const resultItem = resultsSection.querySelector('.result-item');
+            const resultImage = resultItem.querySelector('.result-image');
+            const downloadBtn = resultItem.querySelector('.download-btn');
+            
+            resultImage.style.display = 'none';
+            downloadBtn.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

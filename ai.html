@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L rn的网页 - AI对话</title>
+    <title>L rn的网页 - AI对话助手</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -39,31 +39,22 @@
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
         }
         
-        /* 全局过渡效果 */
-        body, nav, .announcement-banner, .category-card, .featured-card,
-        .site-map-links a, .assistance-item a, .player-btn,
-        .progress-container, .volume-slider, .album-cover,
-        .hero, .hero h1, .assistance-item, .featured-section, 
-        .featured-section .section-title, .featured-card, 
-        .featured-card h3, .featured-card h3 a,
-        .featured-card .date, .featured-card .excerpt,
-        .site-map-section h3, .site-map-links li, .site-map-links a,
-        .chat-container, .chat-messages, .message, .chat-input-container,
-        .chat-input, .send-button, .model-selector, .clear-chat-btn {
-            transition: var(--transition);
-        }
-        
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.47059;
-            padding-bottom: 80px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 0 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         /* 导航栏样式 - 苹果风格 */
@@ -75,6 +66,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            width: 100%;
         }
 
         .dark-mode nav {
@@ -129,6 +121,7 @@
             padding: 14px 0;
             font-size: 14px;
             color: var(--text-secondary);
+            width: 100%;
         }
 
         .dark-mode .announcement-banner {
@@ -142,10 +135,13 @@
         }
         
         
-        
-        /* AI对话区域 */
+        /* AI对话区域 - 自适应宽度 */
         .chat-section {
-            margin: 60px 0;
+            flex: 1;
+            margin: 40px 0 60px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
         }
         
         .chat-container {
@@ -153,7 +149,13 @@
             border-radius: 20px;
             padding: 25px;
             box-shadow: var(--card-shadow);
-            margin-bottom: 60px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            /* 自适应宽度设置 */
+            width: 100%;
+            max-width: 100%;
+            min-width: 1440px;
         }
         
         .chat-header {
@@ -161,6 +163,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .chat-header h2 {
@@ -172,6 +176,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .model-selector select {
@@ -180,6 +185,8 @@
             border: 1px solid var(--text-tertiary);
             background-color: var(--bg-primary);
             color: var(--text-primary);
+            min-width: 200px;
+            max-width: 100%;
         }
         
         .clear-chat-btn {
@@ -192,21 +199,88 @@
             font-weight: 500;
         }
         
+        /* 提示词区域 */
+        .prompt-section {
+            margin-bottom: 20px;
+            background-color: var(--bg-primary);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid var(--text-tertiary);
+            width: 100%;
+        }
+        
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .prompt-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .prompt-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .prompt-btn {
+            padding: 6px 12px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--text-tertiary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .prompt-btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        .prompt-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--text-tertiary);
+            border-radius: 10px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            resize: vertical;
+            min-height: 80px;
+            font-size: 14px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        
         .chat-messages {
-            height: 400px;
+            flex: 1;
             overflow-y: auto;
             margin-bottom: 20px;
             border: 1px solid var(--text-tertiary);
             border-radius: 10px;
             padding: 15px;
             background-color: var(--bg-primary);
+            min-height: 300px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .message {
             margin-bottom: 15px;
             padding: 10px 15px;
             border-radius: 10px;
-            max-width: 80%;
+            max-width: 85%;
+            word-wrap: break-word;
+            box-sizing: border-box;
         }
         
         .message.user {
@@ -230,6 +304,8 @@
         .chat-input-container {
             display: flex;
             gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .chat-input {
@@ -241,6 +317,8 @@
             color: var(--text-primary);
             resize: none;
             height: 60px;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         
         .send-button {
@@ -251,6 +329,7 @@
             border-radius: 10px;
             cursor: pointer;
             font-weight: 500;
+            min-width: 80px;
         }
         
         .send-button:hover {
@@ -262,10 +341,6 @@
             cursor: not-allowed;
         }
         
-        
-        
-       
-        
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-links {
@@ -274,18 +349,6 @@
             
             .hero h1 {
                 font-size: 36px;
-            }
-            
-            .categories-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .featured-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .site-map {
-                grid-template-columns: 1fr;
             }
             
             .chat-header {
@@ -297,6 +360,59 @@
             .model-selector {
                 width: 100%;
                 justify-content: space-between;
+            }
+            
+            .model-selector select {
+                min-width: 150px;
+                flex: 1;
+            }
+            
+            .prompt-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .prompt-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+            
+            .chat-input-container {
+                flex-direction: column;
+            }
+            
+            .send-button {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .chat-container {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .assistance-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .message {
+                max-width: 100%;
+                padding: 8px 12px;
             }
         }
     </style>
@@ -310,10 +426,12 @@
             </button>
             <ul class="nav-links">
                 <li><a href="main.html" class="active">首页</a></li>
-                <li><a href="tech.html">资源</a></li>
+
                 <li><a href="photography.html">摄影</a></li>
+                <li><a href="tech.html">资源</a></li>
                 <li><a href="devices.html">设备</a></li>
                 <li><a href="vr.html">VR</a></li>
+                <li><a href="ai.home.html">AI</a></li>
                 <li><a href="about.html">关于</a></li>
                 <li><a href="contact.html">联系</a></li>
             </ul>
@@ -326,19 +444,35 @@
     </div>
 
     <div class="container">
-       
+
+
         <!-- AI对话区域 -->
-        <section class="chat-section">
+        <section class="chat-section" id="chat-section">
             <div class="chat-container">
                 <div class="chat-header">
                     <h2>AI对话助手</h2>
                     <div class="model-selector">
                         <select id="modelSelect">
                             <option value="deepseek-ai/DeepSeek-R1-0528-Qwen3-8B">DeepSeek-R1</option>
+                            <option value="Qwen/Qwen3-8B">Qwen/Qwen3-8B</option>
+                            <option value="Qwen/Qwen2.5-Coder-7B-Instruct">Qwen/Qwen2.5-Coder-7B-Instruct</option>
                         </select>
                         <button class="clear-chat-btn" id="clearChatBtn">清空对话</button>
                     </div>
                 </div>
+                
+                <!-- 提示词区域 -->
+                <div class="prompt-section">
+                    <div class="prompt-header">
+                        <h3>系统提示词</h3>
+                        <div class="prompt-actions">
+                            <button class="prompt-btn" id="uploadPromptBtn">上传提示词</button>
+                            <button class="prompt-btn" id="resetPromptBtn">重置提示词</button>
+                        </div>
+                    </div>
+                    <textarea class="prompt-textarea" id="promptTextarea" placeholder="输入系统提示词...">你是一个乐于助人的AI助手，请用简洁、专业的语言回答用户的问题。</textarea>
+                </div>
+                
                 <div class="chat-messages" id="chatMessages">
                     <div class="message assistant">
                         <div>您好！我是基于DeepSeek-R1模型的AI助手。请问有什么可以帮您的吗？</div>
@@ -353,11 +487,7 @@
                 </div>
             </div>
         </section>
-
-      
-
-      
-        
+    </div>
 
     <script>
         // 主题切换功能
@@ -383,31 +513,14 @@
             }
         });
 
-        // 交互效果
-        document.querySelectorAll('.category-card').forEach(card => {
-            card.addEventListener('click', function (e) {
-                const categoryName = this.querySelector('h3').textContent;
-                console.log(`导航到 ${categoryName} 分类页面`);
-            });
-        });
-
-        // 文章卡片点击效果
-        document.querySelectorAll('.featured-card').forEach(card => {
-            card.addEventListener('click', function (e) {
-                if (e.target.tagName !== 'A') {
-                    const link = this.querySelector('a');
-                    if (link) {
-                        window.location.href = link.href;
-                    }
-                }
-            });
-        });
-
         // AI对话功能
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const sendButton = document.getElementById('sendButton');
         const clearChatBtn = document.getElementById('clearChatBtn');
+        const promptTextarea = document.getElementById('promptTextarea');
+        const uploadPromptBtn = document.getElementById('uploadPromptBtn');
+        const resetPromptBtn = document.getElementById('resetPromptBtn');
         const API_KEY = 'sk-ucdtvohtqrhygmxxaeiszibfsiozoygcyxsqqfuosazxktwu';
         const API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
 
@@ -452,6 +565,25 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
             try {
+                const model = document.getElementById('modelSelect').value;
+                const systemPrompt = promptTextarea.value.trim();
+                
+                const messages = [];
+                
+                // 添加系统提示词
+                if (systemPrompt) {
+                    messages.push({
+                        role: "system",
+                        content: systemPrompt
+                    });
+                }
+                
+                // 添加用户消息
+                messages.push({
+                    role: "user",
+                    content: message
+                });
+                
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -459,8 +591,8 @@
                         'Authorization': `Bearer ${API_KEY}`
                     },
                     body: JSON.stringify({
-                        model: 'deepseek-ai/DeepSeek-R1-0528-Qwen3-8B',
-                        messages: [{ role: 'user', content: message }],
+                        model: model,
+                        messages: messages,
                         stream: false
                     })
                 });
@@ -492,6 +624,31 @@
                 sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
             }
         }
+
+        // 上传提示词
+        uploadPromptBtn.addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.txt';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    promptTextarea.value = event.target.result;
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        });
+
+        // 重置提示词
+        resetPromptBtn.addEventListener('click', function() {
+            promptTextarea.value = "你是一个乐于助人的AI助手，请用简洁、专业的语言回答用户的问题。";
+        });
 
         // 事件监听
         sendButton.addEventListener('click', sendMessage);
