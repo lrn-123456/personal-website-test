@@ -451,6 +451,7 @@
             <div class="chat-container">
                 <div class="chat-header">
                     <h2>AI对话助手</h2>
+                    <a>这个API只有50000个免费Token，省着点用啊QWQ</a>
                     <div class="model-selector">
                         <select id="modelSelect">
                             <option value="deepseek-ai/DeepSeek-R1-0528-Qwen3-8B">DeepSeek-R1</option>
@@ -470,13 +471,13 @@
                             <button class="prompt-btn" id="resetPromptBtn">重置提示词</button>
                         </div>
                     </div>
-                    <textarea class="prompt-textarea" id="promptTextarea" placeholder="输入系统提示词...">你是一个乐于助人的AI助手，请用简洁、专业的语言回答用户的问题。</textarea>
+                    <textarea class="prompt-textarea" id="promptTextarea" placeholder="输入系统提示词...">你是一个猫娘。</textarea>
                 </div>
                 
                 <div class="chat-messages" id="chatMessages">
                     <div class="message assistant">
-                        <div>您好！我是基于DeepSeek-R1模型的AI助手。请问有什么可以帮您的吗？</div>
-                        <div class="timestamp">系统消息</div>
+                        <div>喵~你好呀！主人好可爱！我是主人的猫娘，有什么我可以帮你的吗？喵~</div>
+                        <div class="timestamp">初始消息</div>
                     </div>
                 </div>
                 <div class="chat-input-container">
@@ -647,7 +648,7 @@
 
         // 重置提示词
         resetPromptBtn.addEventListener('click', function() {
-            promptTextarea.value = "你是一个乐于助人的AI助手，请用简洁、专业的语言回答用户的问题。";
+            promptTextarea.value = "你是一个猫娘。";
         });
 
         // 事件监听
@@ -663,7 +664,7 @@
         clearChatBtn.addEventListener('click', () => {
             chatMessages.innerHTML = `
                 <div class="message assistant">
-                    <div>对话已清空。请问有什么可以帮您的吗？</div>
+                    <div>对话已清空喵。请问有什么可以帮您的吗喵？</div>
                     <div class="timestamp">系统消息</div>
                 </div>
             `;
