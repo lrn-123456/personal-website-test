@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日快乐！</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* 亮色模式 - 欢快协调的颜色 */
+            --bg-primary: #fff9fb;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d2d32;
+            --text-secondary: #5a5a5e;
+            --text-tertiary: #8a8a8e;
+            --accent-color: #ff6b8b;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --gradient-1: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            --gradient-2: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-3: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            --gradient-4: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            
+            /* 生日主题色 - 更欢快的调色板 */
+            --birthday-primary: #ff6b8b;
+            --birthday-secondary: #ffd166;
+            --birthday-tertiary: #06d6a0;
+            --birthday-accent: #5d8bf4;
+            
+            /* 公告横幅专用变量 */
+            --banner-gradient-light: linear-gradient(90deg, #ffd16655 0%, #ffffff 100%);
+            --banner-text-color: #2d2d32;
+            --banner-link-color: #2d2d32;
+            --banner-link-hover-color: rgba(45, 45, 50, 0.8);
+        }
+
+        .dark-mode {
+            /* 暗色模式 - 深紫色和深蓝主题，低亮度但保持协调 */
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #f0f0f5;
+            --text-secondary: #b8b8bf;
+            --text-tertiary: #8a8a95;
+            --accent-color: #9d4edd;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            
+            /* 暗色模式渐变 - 深紫色和深蓝色 */
+            --gradient-1: linear-gradient(135deg, #4a1e6a 0%, #6d3b9e 100%);
+            --gradient-2: linear-gradient(135deg, #2d1b69 0%, #5d3a9b 100%);
+            --gradient-3: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            --gradient-4: linear-gradient(135deg, #311b92 0%, #673ab7 100%);
+            
+            /* 暗色模式生日主题色 */
+            --birthday-primary: #9d4edd;
+            --birthday-secondary: #ff9e00;
+            --birthday-tertiary: #00b894;
+            --birthday-accent: #5d8bf4;
+            
+            /* 暗色模式下的公告横幅变量 */
+            --banner-gradient-light: linear-gradient(90deg, #5d3a9b55 0%, #16213e 100%);
+            --banner-text-color: #f0f0f5;
+            --banner-link-color: #f0f0f5;
+            --banner-link-hover-color: rgba(240, 240, 245, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        /* 页面加载动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 全局过渡效果 */
+        body, nav, .announcement-banner, .category-card, .featured-card,
+        .site-map-links a, .assistance-item a, .player-btn,
+        .progress-container, .volume-slider, .album-cover,
+        .hero, .hero h1, .assistance-item, .featured-section, 
+        .featured-section .section-title, .featured-card, 
+        .featured-card h3, .featured-card h3 a,
+        .featured-card .date, .featured-card .excerpt,
+        .site-map-section h3, .site-map-links li, .site-map-links a {
+            transition: var(--transition);
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.47059;
+            padding-bottom: 80px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 全屏背景动画 - 根据主题调整 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            opacity: 0.7;
+        }
+        
+        .dark-mode body::before {
+            background: linear-gradient(-45deg, #4a1e6a, #2d1b69, #1a237e, #311b92);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            opacity: 0.8;
+        }
+        
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 导航栏样式 */
+        nav {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode nav {
+            background-color: rgba(26, 26, 46, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 52px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: rotate(15deg);
+        }
+        
+        .dark-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 30px;
+            position: relative;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+            padding: 5px 0;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: var(--accent-color);
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a.active {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+        
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        /* 公告横幅 */
+        .announcement-banner {
+            background: var(--banner-gradient-light);
+            text-align: center;
+            padding: 14px 0;
+            font-size: 14px;
+            color: var(--banner-text-color);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+        
+        .announcement-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        .dark-mode .announcement-banner::before {
+            background: linear-gradient(90deg, transparent, rgba(157, 78, 221, 0.2), transparent);
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .announcement-banner a {
+            color: var(--banner-link-color);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 0 5px;
+            transition: color 0.3s ease;
+        }
+        
+        .announcement-banner a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background: var(--banner-link-color);
+            transition: var(--transition);
+        }
+        
+        .announcement-banner a:hover {
+            color: var(--banner-link-hover-color);
+        }
+        
+        .announcement-banner a:hover::after {
+            width: 100%;
+        }
+        
+        /* 主标语区域 */
+        .hero {
+            text-align: center;
+            padding: 100px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+            position: relative;
+            background: linear-gradient(45deg, var(--birthday-primary), var(--birthday-secondary), var(--birthday-tertiary), var(--birthday-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(255, 107, 139, 0.3)); }
+            100% { filter: drop-shadow(0 0 10px rgba(255, 158, 0, 0.6)); }
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        
+        .assistance-section {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .assistance-item {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: var(--bg-secondary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+        
+        .dark-mode .assistance-item {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .assistance-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .assistance-item:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .assistance-item a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-left: 8px;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .assistance-item a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background: var(--accent-color);
+            transition: var(--transition);
+        }
+        
+        .assistance-item a:hover::after {
+            width: 100%;
+        }
+        
+        /* 图片展示网格 */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 60px 0;
+        }
+        
+        .image-card {
+            background-color: var(--bg-secondary);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            transition: var(--transition);
+            height: 300px;
+        }
+        
+        .image-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .image-card:nth-child(2)::before {
+            background: var(--gradient-2);
+        }
+        
+        .image-card:nth-child(3)::before {
+            background: var(--gradient-3);
+        }
+        
+        .image-card:nth-child(4)::before {
+            background: var(--gradient-4);
+        }
+        
+        .image-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .dark-mode .image-card:hover {
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .image-card:hover::before {
+            opacity: 0.1;
+        }
+        
+        .image-container {
+            width: 100%;
+            height: 70%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        
+        .image-card:hover .image-container img {
+            transform: scale(1.1);
+        }
+        
+        .image-content {
+            padding: 20px;
+            height: 30%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .image-content h3 {
+            font-size: 19px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .image-content p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+       
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .image-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .site-map {
+                grid-template-columns: 1fr;
+            }
+            
+            .assistance-section {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+        }
+        
+        /* 滚动动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 生日特别样式 */
+        .birthday-balloon {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.7;
+            font-size: 60px;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .balloon-1 {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+        
+        .balloon-2 {
+            top: 15%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+        
+        .balloon-3 {
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 2s;
+        }
+        
+        .balloon-4 {
+            top: 25%;
+            right: 25%;
+            animation-delay: 3s;
+        }
+        
+        .balloon-5 {
+            bottom: 30%;
+            right: 15%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-30px) rotate(5deg) scale(1.2); }
+            100% { transform: translateY(0) rotate(0deg) scale(1); }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            opacity: 0.8;
+            z-index: 999;
+            font-size: 20px;
+            pointer-events: none;
+        }
+        
+        .birthday-cake {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 60px;
+            animation: cakePulse 2s infinite;
+        }
+        
+        @keyframes cakePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 图片加载状态 */
+        .image-loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        .dark-mode .image-loading {
+            background: linear-gradient(90deg, #2a2a3a 25%, #3a3a4a 50%, #2a2a3a 75%);
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 生日气球（增大尺寸） -->
+    <div class="birthday-balloon balloon-1">🎈</div>
+    <div class="birthday-balloon balloon-2">🎈</div>
+    <div class="birthday-balloon balloon-3">🎈</div>
+    <div class="birthday-balloon balloon-4">🎈</div>
+    <div class="birthday-balloon balloon-5">🎈</div>
+    
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <ul class="nav-links">
+                <li><a href="main.html" class="active">首页</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 公告横幅 -->
+    <div class="announcement-banner">
+        今天是特别的日子！ <a href="wishes.html">送上最真挚的生日祝福 →</a>
+    </div>
+
+    <div class="container">
+        <!-- 主标语区域 -->
+        <section class="hero">
+            <div class="birthday-cake">🎂</div>
+            <h1>憋小仔 生日快乐！</h1>
+            <p>愿你的每一天都充满阳光、欢笑和爱。在这个特别的日子里，送上最美好的祝福！</p>
+        </section>
+
+        <!-- 图片展示网格 -->
+        <section class="image-gallery">
+            <a href="wishes.html" class="image-card fade-in">
+                <div class="image-container">
+                    <img src="PIC/others/1.jpg" alt="生日祝福" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmY5YTllIi8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZhZDBjNCIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIj7lvq7msYLnlJ/mgKc8L3RleHQ+Cjwvc3ZnPg=='">
+                </div>
+                <div class="image-content">
+                    <h3>可爱捏</h3>
+                    <p>送上最真挚的生日祝福，让特别的日子更加难忘</p>
+                </div>
+            </a>
+            <a href="gallery.html" class="image-card fade-in">
+                <div class="image-container">
+                    <img src="PIC/others/2.jpg" alt="生日相册" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmZlY2QyIi8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZjYjY5ZiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIj7lvq7msYLlhazlj7g8L3RleHQ+Cjwvc3ZnPg=='">
+                </div>
+                <div class="image-content">
+                    <h3>lapwing</h3>
+                    <p>记录美好瞬间，珍藏生日回忆</p>
+                </div>
+            </a>
+            <a href="gifts.html" class="image-card fade-in">
+                <div class="image-container">
+                    <img src="PIC/others/3.jpg" alt="礼物推荐" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYTFjNGZkIi8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2MyZTlmYiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIj7lp5DlpoflhazlrqQ8L3RleHQ+Cjwvc3ZnPg=='">
+                </div>
+                <div class="image-content">
+                    <h3>大额头</h3>
+                    <p>精选创意发型，让生日更加惊喜</p>
+                </div>
+            </a>
+        </section>
+
+      
+    </div>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        });
+
+        // 交互效果
+        document.querySelectorAll('.image-card').forEach(card => {
+            card.addEventListener('click', function (e) {
+                const categoryName = this.querySelector('h3').textContent;
+                console.log(`导航到 ${categoryName} 分类页面`);
+            });
+        });
+
+        // 滚动动画效果
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeInObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        fadeElements.forEach(element => {
+            fadeInObserver.observe(element);
+        });
+
+        // 导航栏滚动效果
+        let lastScrollY = window.scrollY;
+        const nav = document.querySelector('nav');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > lastScrollY && window.scrollY > 100) {
+                nav.style.transform = 'translateY(-100%)';
+            } else {
+                nav.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollY = window.scrollY;
+        });
+
+        // 创建彩色纸屑效果（从导航栏处释放）
+        function createConfetti() {
+            const colors = ['#ff6b8b', '#ffd166', '#06d6a0', '#5d8bf4', '#9d4edd'];
+            const symbols = ['❄️', '✨', '⭐', '💫', '🎉', '🎊', '🎈', '💖', '💝'];
+            const container = document.body;
+            
+            // 增加纸屑数量
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // 设置纸屑位置在导航栏处（屏幕顶部）
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '0px';
+                
+                // 随机选择纸屑符号
+                confetti.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                // 随机设置颜色
+                confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 随机设置动画持续时间（3-6秒）
+                const duration = Math.random() * 3 + 3;
+                
+                // 设置动画
+                confetti.style.animation = `fall ${duration}s linear forwards`;
+                
+                // 添加纸屑到页面
+                container.appendChild(confetti);
+                
+                // 动画结束后删除纸屑
+                setTimeout(() => {
+                    confetti.remove();
+                }, duration * 1000);
+            }
+            
+            // 添加下落动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fall {
+                    0% { 
+                        transform: translateY(0) rotate(0deg); 
+                        opacity: 1;
+                    }
+                    100% { 
+                        transform: translateY(100vh) rotate(${Math.random() > 0.5 ? '' : '-'}360deg); 
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // 页面加载后创建纸屑
+        window.addEventListener('load', () => {
+            createConfetti();
+            
+            // 每5秒创建一次纸屑
+            setInterval(createConfetti, 5000);
+        });
+        
+        // 图片加载错误处理
+        document.querySelectorAll('.image-container img').forEach(img => {
+            img.addEventListener('error', function() {
+                console.log('图片加载失败: ' + this.src);
+            });
+        });
+    </script>
+</body>
+</html>

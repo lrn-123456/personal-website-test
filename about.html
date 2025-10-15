@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>了解更多</title>
+    <title>关于 - L rn的网页</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -14,12 +14,18 @@
             --text-tertiary: #86868b;
             --accent-color: #06c;
             --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
-                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
-                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            
+            /* 公告横幅专用变量 - 亮色模式 */
+            --banner-gradient-light: linear-gradient(90deg, #acacac55 0%, #ffffff 100%);
+            --banner-gradient-dark: linear-gradient(90deg, #262626 0%, #000000 100%);
+            --banner-text-color: #1d1d1f; /* 亮色模式下为黑色 */
+            --banner-link-color: #1d1d1f; /* 亮色模式下为黑色 */
+            --banner-link-hover-color: rgba(29, 29, 31, 0.8); /* 亮色模式下为深灰色 */
         }
 
         .dark-mode {
@@ -30,6 +36,16 @@
             --text-tertiary: #6e6e73;
             --accent-color: #2997ff;
             --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --gradient-1: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --gradient-2: linear-gradient(135deg, #8e44ad 0%, #c0392b 100%);
+            --gradient-3: linear-gradient(135deg, #16a085 0%, #f4d03f 100%);
+            --gradient-4: linear-gradient(135deg, #2980b9 0%, #2c3e50 100%);
+            
+            /* 暗色模式下的公告横幅变量 */
+            --banner-gradient-light: var(--banner-gradient-dark);
+            --banner-text-color: #f5f5f7; /* 暗色模式下为白色 */
+            --banner-link-color: #f5f5f7; /* 暗色模式下为白色 */
+            --banner-link-hover-color: rgba(245, 245, 247, 0.8); /* 暗色模式下为浅灰色 */
         }
 
         * {
@@ -37,6 +53,12 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+        
+        /* 页面加载动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         /* 全局过渡效果 */
@@ -56,6 +78,8 @@
             color: var(--text-primary);
             line-height: 1.47059;
             padding-bottom: 80px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
         }
         
         .container {
@@ -64,26 +88,30 @@
             padding: 0 20px;
         }
         
-        /* 导航栏样式 - 苹果风格 */
+        /* 导航栏样式 - 苹果风格增强 */
         nav {
-            background-color: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
             padding: 0 20px;
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
         }
 
         .dark-mode nav {
-            background-color: rgba(29, 29, 31, 0.72);
+            background-color: rgba(29, 29, 31, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
         }
         
         .nav-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 44px;
+            height: 52px;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -97,6 +125,18 @@
             border: none;
             color: var(--text-secondary);
             font-size: 18px;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: rotate(15deg);
+        }
+        
+        .dark-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         
         .nav-links {
@@ -106,6 +146,7 @@
         
         .nav-links li {
             margin-right: 30px;
+            position: relative;
         }
         
         .nav-links a {
@@ -114,36 +155,118 @@
             font-size: 14px;
             font-weight: 400;
             opacity: 0.8;
+            padding: 5px 0;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: var(--accent-color);
+            transition: var(--transition);
         }
         
         .nav-links a:hover {
             opacity: 1;
         }
         
-        /* 公告横幅 */
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a.active {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+        
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        /* 公告横幅 - 优化版 */
         .announcement-banner {
-            background: linear-gradient(to right, #f5f5f7, #fff, #f5f5f7);
+            background: var(--banner-gradient-light);
             text-align: center;
             padding: 14px 0;
             font-size: 14px;
-            color: var(--text-secondary);
+            color: var(--banner-text-color);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
         }
-
-        .dark-mode .announcement-banner {
-            background: linear-gradient(to right, #000, #1d1d1f, #000);
+        
+        .announcement-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
         
         .announcement-banner a {
-            color: var(--accent-color);
+            color: var(--banner-link-color);
             text-decoration: none;
             font-weight: 500;
+            position: relative;
+            padding: 0 5px;
+            transition: color 0.3s ease;
+        }
+        
+        .announcement-banner a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background: var(--banner-link-color);
+            transition: var(--transition);
+        }
+        
+        .announcement-banner a:hover {
+            color: var(--banner-link-hover-color);
+        }
+        
+        .announcement-banner a:hover::after {
+            width: 100%;
         }
         
         /* 主标语区域 */
         .hero {
             text-align: center;
-            padding: 80px 0 60px;
+            padding: 100px 0 80px;
             background-color: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            animation: pulse 15s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10%, 10%) scale(1.1); }
         }
         
         .hero h1 {
@@ -151,6 +274,17 @@
             font-weight: 600;
             margin-bottom: 20px;
             letter-spacing: -0.5px;
+            position: relative;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(0, 119, 255, 0.3)); }
+            100% { filter: drop-shadow(0 0 10px rgba(0, 119, 255, 0.6)); }
         }
         
         .hero p {
@@ -166,6 +300,7 @@
             justify-content: center;
             gap: 30px;
             margin-top: 30px;
+            position: relative;
         }
         
         .assistance-item {
@@ -173,6 +308,16 @@
             align-items: center;
             font-size: 16px;
             color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: var(--bg-secondary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+        
+        .assistance-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
         
         .assistance-item a {
@@ -180,6 +325,22 @@
             text-decoration: none;
             margin-left: 8px;
             font-weight: 500;
+            position: relative;
+        }
+        
+        .assistance-item a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background: var(--accent-color);
+            transition: var(--transition);
+        }
+        
+        .assistance-item a:hover::after {
+            width: 100%;
         }
         
         /* 内容区域 */
@@ -192,8 +353,26 @@
             font-weight: 600;
             margin-bottom: 40px;
             text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0 20px;
         }
         
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        /* 功能网格 - 使用main.html的卡片样式 */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -206,11 +385,14 @@
             border-radius: 20px;
             padding: 30px;
             box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
         }
         
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
         
         .feature-icon {
@@ -231,6 +413,61 @@
             line-height: 1.5;
         }
         
+        /* 关于区域卡片样式 */
+        .about-card {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        
+        .about-card h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .about-card h3::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        .about-card p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        /* 滚动动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-links {
@@ -248,6 +485,12 @@
             .features-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .assistance-section {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
         }
     </style>
 </head>
@@ -260,28 +503,27 @@
             </button>
             <ul class="nav-links">
                 <li><a href="main.html">首页</a></li>
-
-                <li><a href="photography.html">摄影</a></li>
                 <li><a href="tech.html">资源</a></li>
+                <li><a href="photography.html">摄影</a></li>
                 <li><a href="devices.html">设备</a></li>
                 <li><a href="vr.html">VR</a></li>
-                <li><a href="ai.home.html">AI</a></li>
+                <li><a href="ai.html">AI</a></li>
                 <li><a href="about.html" class="active">关于</a></li>
                 <li><a href="contact.html">联系</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- 公告横幅 -->
+    <!-- 公告横幅 - 优化版 -->
     <div class="announcement-banner">
-        最新作品已发布  <a href="https://space.bilibili.com/3494363069941880?spm_id_from=333.1007.0.0">欣赏新视频 →</a>
+        最新作品已发布  <a href="https://space.bilibili.com/3494363069941880?spm_id_from=333.1007.0.0" target="_blank">欣赏新视频 →</a>
     </div>
 
     <div class="container">
         <!-- 主标语区域 -->
         <section class="hero" id="home">
-            <h1>自动化网页设计</h1>
-            <p>质量与难度的完美平衡，提供卓越的开发体验</p>
+            <h1>关于这个博客</h1>
+            <p>探索科技与创意的交汇点，分享我的学习和创作历程</p>
             <div class="assistance-section">
                 <div class="assistance-item">
                     <span>了解更多信息?</span>
@@ -294,42 +536,42 @@
         <section class="content-section" id="features">
             <h2 class="section-title">这是什么？</h2>
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="fas fa-palette"></i>
                     </div>
                     <h3>优雅的设计</h3>
                     <p>采用现代风格设计语言，注重细节和用户体验，提供视觉上的愉悦感。</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="fas fa-moon"></i>
                     </div>
                     <h3>深色模式</h3>
                     <p>支持平滑的亮暗模式切换，保护用户眼睛，提供舒适的阅读体验。</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="fas fa-bolt"></i>
                     </div>
                     <h3>极致性能</h3>
                     <p>优化的代码结构和资源加载策略，确保页面快速加载和流畅交互。</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="fas fa-mobile-alt"></i>
                     </div>
                     <h3>响应式布局</h3>
                     <p>完美适配各种设备尺寸，从手机到桌面电脑都能提供一致的使用体验。</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="fas fa-code"></i>
                     </div>
                     <h3>现代化技术</h3>
                     <p>使用最新的Web技术标准，确保网站的长期可维护性和扩展性。</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="fas fa-cogs"></i>
                     </div>
@@ -342,7 +584,7 @@
         <!-- 关于区域 -->
         <section class="content-section" id="about">
             <h2 class="section-title">设计理念</h2>
-            <div class="feature-card">
+            <div class="about-card fade-in">
                 <h3>简约而不简单</h3>
                 <p>我们的设计哲学是"少即是多"。我们相信优秀的设计应该专注于本质，去除不必要的元素，让用户能够专注于内容本身。</p>
                 <p>通过精心的排版、恰当的色彩运用和微妙的动画效果，我们创造出既美观又实用的界面，让每一次交互都成为一种享受。</p>
@@ -394,6 +636,36 @@
                     });
                 }
             });
+        });
+
+        // 滚动动画效果
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeInObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        fadeElements.forEach(element => {
+            fadeInObserver.observe(element);
+        });
+
+        // 导航栏滚动效果
+        let lastScrollY = window.scrollY;
+        const nav = document.querySelector('nav');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > lastScrollY && window.scrollY > 100) {
+                nav.style.transform = 'translateY(-100%)';
+            } else {
+                nav.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollY = window.scrollY;
         });
     </script>
 </body>
