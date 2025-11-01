@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>关于 - L rn的网页</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="player.css">
     <style>
         :root {
             --bg-primary: #f5f5f7;
@@ -507,7 +508,7 @@
                 <li><a href="photography.html">摄影</a></li>
                 <li><a href="devices.html">设备</a></li>
                 <li><a href="vr.html">VR</a></li>
-                <li><a href="ai.html">AI</a></li>
+                <li><a href="ai.home.html">AI</a></li>
                 <li><a href="about.html" class="active">关于</a></li>
                 <li><a href="contact.html">联系</a></li>
             </ul>
@@ -668,5 +669,53 @@
             lastScrollY = window.scrollY;
         });
     </script>
+    
+    <!-- 音乐播放器 -->
+    <div id="music-player">
+        <button class="hide-player-btn" title="隐藏/显示播放栏">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        
+        <!-- 歌曲信息 -->
+        <div class="player-info">
+            <div class="player-album-cover">
+                <i class="fas fa-music"></i>
+            </div>
+            <div class="song-details">
+                <div class="song-title">歌曲名称</div>
+                <div class="song-artist">艺术家</div>
+            </div>
+        </div>
+        
+        <!-- 播放控制 -->
+        <div class="player-controls">
+            <div class="controls-buttons">
+                <button class="control-btn prev-btn" title="上一首">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-btn" title="播放/暂停">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn next-btn" title="下一首">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+            <div class="progress-container">
+                <span class="time-display current-time">0:00</span>
+                <input type="range" class="progress-bar" min="0" max="100" value="0">
+                <span class="time-display total-time">0:00</span>
+            </div>
+        </div>
+        
+        <!-- 音量控制 -->
+        <div class="volume-container">
+            <button class="volume-btn" title="静音">
+                <i class="fas fa-volume-high"></i>
+            </button>
+            <input type="range" class="volume-slider" min="0" max="100" value="80">
+        </div>
+    </div>
+    
+    <script src="player.js"></script>
 </body>
 </html>

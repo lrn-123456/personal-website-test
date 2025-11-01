@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VR空间</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="player.css">
     <style>
         :root {
             --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -14,12 +15,18 @@
             --text-tertiary: #86868b;
             --accent-color: #764ba2;
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --transition: color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                          background-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                          border-color 0.20s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                          box-shadow 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
-                          opacity 0.20s cubic-bezier(0.25, 0.1, 0.25, 1),
-                          transform 0.20s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            
+            /* 公告横幅专用变量 - 亮色模式 */
+            --banner-gradient-light: linear-gradient(90deg, #acacac55 0%, #ffffff 100%);
+            --banner-gradient-dark: linear-gradient(90deg, #262626 0%, #000000 100%);
+            --banner-text-color: #1d1d1f; /* 亮色模式下为黑色 */
+            --banner-link-color: #1d1d1f; /* 亮色模式下为黑色 */
+            --banner-link-hover-color: rgba(29, 29, 31, 0.8); /* 亮色模式下为深灰色 */
         }
 
         .dark-mode {
@@ -30,6 +37,16 @@
             --text-tertiary: #6e6e73;
             --accent-color: #667eea;
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --gradient-1: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --gradient-2: linear-gradient(135deg, #8e44ad 0%, #c0392b 100%);
+            --gradient-3: linear-gradient(135deg, #16a085 0%, #f4d03f 100%);
+            --gradient-4: linear-gradient(135deg, #2980b9 0%, #2c3e50 100%);
+            
+            /* 暗色模式下的公告横幅变量 */
+            --banner-gradient-light: var(--banner-gradient-dark);
+            --banner-text-color: #f5f5f7; /* 暗色模式下为白色 */
+            --banner-link-color: #f5f5f7; /* 暗色模式下为白色 */
+            --banner-link-hover-color: rgba(245, 245, 247, 0.8); /* 暗色模式下为浅灰色 */
         }
 
         * {
@@ -63,7 +80,15 @@
         }
         
         /* 全局过渡效果 */
-        body, nav, .theme-toggle, .vr-card, .vr-image, 
+        body, nav, .announcement-banner, .category-card, .featured-card,
+        .site-map-links a, .assistance-item a, .player-btn,
+        .progress-container, .volume-slider, .album-cover,
+        .hero, .hero h1, .assistance-item, .featured-section, 
+        .featured-section .section-title, .featured-card, 
+        .featured-card h3, .featured-card h3 a,
+        .featured-card .date, .featured-card .excerpt,
+        .site-map-section h3, .site-map-links li, .site-map-links a,
+        .theme-toggle, .vr-card, .vr-image, 
         .vr-info, .specs-grid, .spec-item, .vr-badge {
             transition: var(--transition);
         }
@@ -74,28 +99,30 @@
             padding: 0 20px;
         }
         
-        /* 导航栏样式 */
+        /* 导航栏样式 - 苹果风格增强 */
         nav {
             background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
             padding: 0 20px;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
         }
 
         .dark-mode nav {
             background-color: rgba(29, 29, 31, 0.85);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
         }
         
         .nav-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 44px;
+            height: 52px;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -600,5 +627,53 @@
        
 
     </script>
+    
+    <!-- 音乐播放器 -->
+    <div id="music-player">
+        <button class="hide-player-btn" title="隐藏/显示播放栏">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        
+        <!-- 歌曲信息 -->
+        <div class="player-info">
+            <div class="player-album-cover">
+                <i class="fas fa-music"></i>
+            </div>
+            <div class="song-details">
+                <div class="song-title">歌曲名称</div>
+                <div class="song-artist">艺术家</div>
+            </div>
+        </div>
+        
+        <!-- 播放控制 -->
+        <div class="player-controls">
+            <div class="controls-buttons">
+                <button class="control-btn prev-btn" title="上一首">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-btn" title="播放/暂停">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn next-btn" title="下一首">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+            <div class="progress-container">
+                <span class="time-display current-time">0:00</span>
+                <input type="range" class="progress-bar" min="0" max="100" value="0">
+                <span class="time-display total-time">0:00</span>
+            </div>
+        </div>
+        
+        <!-- 音量控制 -->
+        <div class="volume-container">
+            <button class="volume-btn" title="静音">
+                <i class="fas fa-volume-high"></i>
+            </button>
+            <input type="range" class="volume-slider" min="0" max="100" value="80">
+        </div>
+    </div>
+    
+    <script src="player.js"></script>
 </body>
 </html>
